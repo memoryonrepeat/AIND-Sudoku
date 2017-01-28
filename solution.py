@@ -1,3 +1,11 @@
+# TODO:
+# Refactor to make it more Pythonic
+# Use functions directly instead of utils
+# Use assign_value to visualize
+# Optimize naked_twins to get rid of duplicated cases
+
+import utils
+
 assignments = []
 
 def assign_value(values, box, value):
@@ -21,10 +29,20 @@ def naked_twins(values):
 
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
+    
+    for box in values:
+        if len(values[box])==2:
+            for peer in utils.peers[box]:
+                if values[peer]==values[box]: # found a naked twin
+                    affected_peers = utils.peers[box] & utils.peers[peer]
+                    for ap in affected_peers:
+                        values[ap] = values[ap].replace(values[box][0],'').replace(values[box][1],'')
+
+    return values
 
 def cross(A, B):
     "Cross product of elements in A and elements in B."
-    pass
+    return [s+t for s in a for t in b]
 
 def grid_values(grid):
     """
@@ -36,7 +54,7 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
-    pass
+    return dict(zip(utils.boxes,map(lambda x: ('123456789' if x=='.' else x), [char for char in grid])))
 
 def display(values):
     """
@@ -44,19 +62,19 @@ def display(values):
     Args:
         values(dict): The sudoku in dictionary form
     """
-    pass
+    utils.display(values)
 
 def eliminate(values):
-    pass
+    return utils.eliminate(values)
 
 def only_choice(values):
-    pass
+    return utils.only_choice(values)
 
 def reduce_puzzle(values):
-    pass
+    return utils.reduce_puzzle(values)
 
 def search(values):
-    pass
+    return utils.search(values)
 
 def solve(grid):
     """
@@ -67,6 +85,8 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
+    print(utils.diagonal_units)
+    return search(grid_values(grid))
 
 if __name__ == '__main__':
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
