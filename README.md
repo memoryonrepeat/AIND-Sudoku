@@ -3,11 +3,11 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: The constraint in the naked twin problem is that only the twin boxes can have their twin digits, and we propagate that constraint to all mutual peers of the twin. From this definition, we can derive an algorithm to search for twins first, then propagate the constraint, which means removing any instances of the twin digits.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: The discussed techniques like elimination, only choice, naked twins, search does not care about the actual shape of the sudoku. They only applies to the units and peers, therefore as long as the units can be modified to accommodate the new sudoku variant, such techniques can be reapplied. In the diagonal sudoku case, we can simply add the two diagonals to the units and reuse those techniques to come to a solution.
 
 ### Install
 

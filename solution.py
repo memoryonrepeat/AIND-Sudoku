@@ -69,9 +69,11 @@ def eliminate(values):
     Input: A sudoku in dictionary form.
     Output: The resulting sudoku in dictionary form.
     """
+
+    # For each blank box (value='123456789'), scan for its peers with predefined values and eliminate those values from it
     result = {}
     for square in values:
-        if len(values[square]) != 1: # only consider blank squares
+        if len(values[square]) != 1: 
             result[square] = '123456789'
             for peer in peers[square]:
                 if len(values[peer]) == 1:
@@ -86,13 +88,13 @@ def only_choice(values):
     Input: A sudoku in dictionary form.
     Output: The resulting sudoku in dictionary form.
     """
+    new_values = values.copy()
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
             if len(dplaces) == 1:
-                assign_value(values, dplaces[0], digit)
-                # values[dplaces[0]] = digit
-    return values
+                new_values[dplaces[0]] = digit
+    return new_values
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
@@ -103,8 +105,9 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
 
-    # Find all instances of naked twins
-    # Eliminate the naked twins as possibilities for their peers
+    # For each box, scan for naked twins in its peers
+    # Once found, find affected peers, which is intersection between the peers of current box and the peers of the twin box
+    # Remove all naked twin values from affected peers
     
     for box in values:
         if len(values[box])==2:
