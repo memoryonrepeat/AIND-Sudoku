@@ -7,7 +7,7 @@
 # Implement other strategies
 # Implement naked 
 
-import utils
+# import utils
 
 assignments = []
 
@@ -61,7 +61,7 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
-    return dict(zip(utils.boxes,map(lambda x: ('123456789' if x=='.' else x), [char for char in grid])))
+    return dict(zip(boxes,map(lambda x: ('123456789' if x=='.' else x), [char for char in grid])))
     
 def eliminate(values):
     """
@@ -71,16 +71,23 @@ def eliminate(values):
     """
 
     # For each blank box (value='123456789'), scan for its peers with predefined values and eliminate those values from it
-    result = {}
-    for square in values:
-        if len(values[square]) != 1: 
-            result[square] = '123456789'
-            for peer in peers[square]:
-                if len(values[peer]) == 1:
-                    result[square] = result[square].replace(values[peer],'')
-        else:
-            result[square] = values[square]
-    return result
+    new_values = values.copy()
+    for box in new_values:
+        if len(values[box]) != 1:
+            for peer in peers[box]:
+                if (len(values[peer])) == 1:
+                    assign_value(new_values, box, new_values[box].replace(values[peer],''))
+    return new_values
+
+    # Alternate solution by Udacity: iterate through solved values then remove that value from its peers (more straightforward)
+    
+    # solved_values = [box for box in values.keys() if len(values[box]) == 1]
+    # for box in solved_values:
+    #     digit = values[box]
+    #     for peer in peers[box]:
+    #         # assign_value(values,peer,values[peer].replace(digit,''))
+    #         values[peer] = values[peer].replace(digit,'')
+    # return values
 
 def only_choice(values):
     """
@@ -93,7 +100,8 @@ def only_choice(values):
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
             if len(dplaces) == 1:
-                new_values[dplaces[0]] = digit
+                assign_value(new_values, dplaces[0], digit)
+                # new_values[dplaces[0]] = digit
     return new_values
 
 def naked_twins(values):
@@ -111,10 +119,11 @@ def naked_twins(values):
     
     for box in values:
         if len(values[box])==2:
-            for peer in utils.peers[box]:
+            for peer in peers[box]:
                 if values[peer]==values[box]: # found a naked twin
-                    for ap in utils.peers[box] & utils.peers[peer]:
-                        values[ap] = values[ap].replace(values[box][0],'').replace(values[box][1],'')
+                    for ap in peers[box] & peers[peer]:
+                        assign_value(values, ap, values[ap].replace(values[box][0],'').replace(values[box][1],''))
+                        # values[ap] = values[ap].replace(values[box][0],'').replace(values[box][1],'')
     return values
 
 def reduce_puzzle(values):
@@ -184,5 +193,7 @@ if __name__ == '__main__':
 
     except SystemExit:
         pass
-    except:
-        print('We could not visualize your board due to a pygame issue. Not a problem! It is not a requirement.')
+    except Exception as e: 
+        print(e)
+    # except:
+    #     print('We could not visualize your board due to a pygame issue. Not a problem! It is not a requirement.')
